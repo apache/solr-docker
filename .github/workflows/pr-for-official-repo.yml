@@ -1,0 +1,37 @@
+name: Create PR for Official Images Repo
+
+on:
+  push:
+    branches:
+      - 'test'
+    paths:
+      - '.github/workflows/pr-for-official-repo.yml'
+      - 'old-solr-versions'
+      - 'generate-stackbrew-library.sh'
+      - '[0-9]+.[0-9]+'
+
+jobs:
+  test:
+    name: Build and test Docker image
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+      - name: Checkout official-images fork
+        uses: actions/checkout@v3
+        with:
+          repository: docker-solr/official-images
+          path: official-images
+      - name: Generate new Solr manifest
+        run: ./generate-stackbrew-library.sh > official-images/library/solr
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          push-to-fork: docker-solr/official-images
+          add-paths: official-images/library/solr
+          branch-suffix: short-commit-hash
+          commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
+          title: "Apache Solr - ${{ github.event.commits[0].message }}"
+          delete-branch: true

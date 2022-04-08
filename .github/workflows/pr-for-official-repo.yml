@@ -36,7 +36,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           path: official-images
-          push-to-fork: docker-solr/official-images
+          #push-to-fork: docker-solr/official-images
           add-paths: official-images/library/solr
           branch-suffix: short-commit-hash
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"

@@ -8,7 +8,7 @@ on:
       - '.github/workflows/pr-for-official-repo.yml'
       - 'old-solr-versions'
       - 'generate-stackbrew-library.sh'
-      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+/'
 
 jobs:
   test:

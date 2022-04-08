@@ -24,6 +24,11 @@ jobs:
         with:
           repository: docker-solr/official-images
           path: official-images
+      - name: Install BashBrew
+        run: |
+          wget -nv --output-document="${HOME}/.local/bin/bashbrew" https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64
+          chmod a+x "${HOME}/.local/bin/bashbrew"
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Generate new Solr manifest
         run: ./generate-stackbrew-library.sh > official-images/library/solr
       - name: Create Pull Request

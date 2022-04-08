@@ -37,7 +37,7 @@ jobs:
         with:
           path: official-images
           #push-to-fork: docker-solr/official-images
-          add-paths: official-images/library/solr
+          add-paths: library/solr
           branch-suffix: short-commit-hash
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
           title: "Apache Solr - ${{ github.event.commits[0].message }}"

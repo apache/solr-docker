@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: docker-solr/official-images
-          path: ../official-images
+          path: official-images
       - name: Install BashBrew
         run: |
           mkdir -p "${HOME}/.local/bin"
@@ -31,11 +31,11 @@ jobs:
           chmod a+x "${HOME}/.local/bin/bashbrew"
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Generate new Solr manifest
-        run: ./generate-stackbrew-library.sh > ../official-images/library/solr
+        run: ./generate-stackbrew-library.sh > official-images/library/solr
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          path: ../official-images
+          path: official-images
           #push-to-fork: docker-solr/official-images
           add-paths: official-images/library/solr
           branch-suffix: short-commit-hash

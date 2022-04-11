@@ -3,7 +3,7 @@ name: Create PR for Official Images Repo
 on:
   push:
     branches:
-      - 'test'
+      - 'main'
     paths:
       - '.github/workflows/pr-for-official-repo.yml'
       - 'old-solr-versions'
@@ -41,5 +41,13 @@ jobs:
           branch-suffix: short-commit-hash
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
           title: "Apache Solr - ${{ github.event.commits[0].message }}"
+          body: |
+            Apache Solr:
+            
+            ${{ github.event.commits[0].message }}
+            
+            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @janhoy
+            
+            This is an automated PR based on a change made in the https://github.com/apache/solr-docker repository's `main` branch.
           delete-branch: true
           token: ${{ secrets.DOCKER_SOLR_BUILD_PAT }}

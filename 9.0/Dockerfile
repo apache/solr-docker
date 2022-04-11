@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-FROM eclipse-temurin:17-jre-focal
+FROM eclipse-temurin:17-jre
 
 # TODO: remove things that exist solely for downstream specialization since Dockerfile.local now exists for that
 # TODO: replace 3rd party keyservers with official Apache Solr KEYS url

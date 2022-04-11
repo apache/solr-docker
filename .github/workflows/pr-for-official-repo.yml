@@ -42,3 +42,4 @@ jobs:
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
           title: "Apache Solr - ${{ github.event.commits[0].message }}"
           delete-branch: true
+          token: ${{ secrets.DOCKER_SOLR_BUILD_PAT }}

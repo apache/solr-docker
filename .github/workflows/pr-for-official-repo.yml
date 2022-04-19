@@ -22,7 +22,7 @@ jobs:
       - name: Checkout official-images fork
         uses: actions/checkout@v3
         with:
-          repository: docker-solr/official-images
+          repository: docker-library/official-images
           path: official-images
       - name: check headcommit message
         id: commit
@@ -42,7 +42,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           path: official-images
-          #push-to-fork: docker-solr/official-images
+          push-to-fork: docker-solr/official-images
           add-paths: library/solr
           branch-suffix: short-commit-hash
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
@@ -52,7 +52,7 @@ jobs:
             
             ${{ github.event.commits[0].message }}
             
-            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @janhoy
+            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @madrob
             
             This is an automated PR based on a change made in the https://github.com/apache/solr-docker repository's `main` branch.
           delete-branch: true

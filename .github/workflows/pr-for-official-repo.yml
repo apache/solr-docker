@@ -24,6 +24,12 @@ jobs:
         with:
           repository: docker-solr/official-images
           path: official-images
+      - name: check headcommit message
+        id: commit
+        run: |
+          str="$(jq '.head_commit.message' $GITHUB_EVENT_PATH)"    # get the head_commit message
+          echo ::set-output name=title::${str%%\\n*} | tr -d '"'         # get the title
+          echo ::set-output name=body::${str##*\\n} | tr -d '"'
       - name: Install BashBrew
         run: |
           mkdir -p "${HOME}/.local/bin"
@@ -40,7 +46,7 @@ jobs:
           add-paths: library/solr
           branch-suffix: short-commit-hash
           commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
-          title: "Apache Solr - ${{ github.event.commits[0].message }}"
+          title: "Apache Solr - ${{ steps.commit.outputs.title}}"
           body: |
             Apache Solr:
             

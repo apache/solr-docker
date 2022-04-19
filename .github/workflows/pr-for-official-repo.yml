@@ -1,0 +1,53 @@
+name: Create PR for Official Images Repo
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/pr-for-official-repo.yml'
+      - 'old-solr-versions'
+      - 'generate-stackbrew-library.sh'
+      - '[0-9]+.[0-9]+/**'
+
+jobs:
+  test:
+    name: Create PR
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+      - name: Checkout official-images fork
+        uses: actions/checkout@v3
+        with:
+          repository: docker-solr/official-images
+          path: official-images
+      - name: Install BashBrew
+        run: |
+          mkdir -p "${HOME}/.local/bin"
+          wget -nv --output-document="${HOME}/.local/bin/bashbrew" https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64
+          chmod a+x "${HOME}/.local/bin/bashbrew"
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      - name: Generate new Solr manifest
+        run: ./generate-stackbrew-library.sh > official-images/library/solr
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          path: official-images
+          #push-to-fork: docker-solr/official-images
+          add-paths: library/solr
+          branch-suffix: short-commit-hash
+          commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
+          title: "Apache Solr - ${{ github.event.commits[0].message }}"
+          body: |
+            Apache Solr:
+            
+            ${{ github.event.commits[0].message }}
+            
+            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @janhoy
+            
+            This is an automated PR based on a change made in the https://github.com/apache/solr-docker repository's `main` branch.
+          delete-branch: true
+          token: ${{ secrets.DOCKER_SOLR_BUILD_PAT }}

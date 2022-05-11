@@ -70,6 +70,7 @@ Maintainers: The Apache Solr Project <dev@solr.apache.org> (@asfbot),
 			 Jan Høydahl (@janhoy),
 			 Houston Putman (@houstonputman)
 GitRepo: https://github.com/apache/solr-docker.git
+GitFetch: refs/heads/main
 EOH
 
 for version in "${versions[@]}"; do

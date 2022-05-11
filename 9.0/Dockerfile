@@ -20,7 +20,7 @@ FROM eclipse-temurin:17-jre
 # TODO: replace 3rd party keyservers with official Apache Solr KEYS url
 
 ARG SOLR_VERSION="9.0.0"
-ARG SOLR_SHA512="1d8ab968dfd8b169a647fe4aa75b11c44b656974a834492a69c964233ad65310c3d0cd1eeebf7bc15167aa4b5af498f345943f0b4b3fb817450686cbe1e6a4da"
+ARG SOLR_SHA512="383c6b6f352f2a385ece99b2b0a82e1552430aea65c6c33e5569da422138844192db4e06f58699325af55ee631694e16f836a5bbf8556f86fdeabc0cfa0533d5"
 ARG SOLR_KEYS="0D8D0B93"
 
 # If specified, this will override SOLR_DOWNLOAD_SERVER and all ASF mirrors. Typically used downstream for custom builds
@@ -33,7 +33,7 @@ ARG SOLR_DOWNLOAD_URL
 ARG SOLR_DOWNLOAD_SERVER
 
 # These should never be overridden except for the purposes of testing the Dockerfile before release
-ARG SOLR_CLOSER_URL="http://www.apache.org/dyn/closer.lua/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz?action=download"
+ARG SOLR_CLOSER_URL="http://www.apache.org/dyn/closer.lua?action=download&filename=/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
 ARG SOLR_DIST_URL="https://www.apache.org/dist/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
 ARG SOLR_ARCHIVE_URL="https://archive.apache.org/dist/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
 
@@ -48,10 +48,9 @@ RUN set -ex; \
   for key in $SOLR_KEYS; do \
     found=''; \
     for server in \
-      ha.pool.sks-keyservers.net \
-      hkp://keyserver.ubuntu.com:80 \
-      hkp://p80.pool.sks-keyservers.net:80 \
       pgp.mit.edu \
+      keyserver.ubuntu.com \
+      hkp://keyserver.ubuntu.com:80 \
     ; do \
       echo "  trying $server for $key"; \
       gpg --batch --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$key" && found=yes && break; \
@@ -59,7 +58,7 @@ RUN set -ex; \
     done; \
     test -z "$found" && echo >&2 "error: failed to fetch $key from several disparate servers -- network issues?" && exit 1; \
   done; \
-  MAX_REDIRECTS=1; \
+  MAX_REDIRECTS=2; \
   if [ -n "$SOLR_DOWNLOAD_URL" ]; then \
     # If a custom URL is defined, we download from non-ASF mirror URL and allow more redirects and skip GPG step
     # This takes effect only if the SOLR_DOWNLOAD_URL build-arg is specified, typically in downstream Dockerfiles

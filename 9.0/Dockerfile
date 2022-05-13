@@ -17,11 +17,10 @@
 FROM eclipse-temurin:17-jre
 
 # TODO: remove things that exist solely for downstream specialization since Dockerfile.local now exists for that
-# TODO: replace 3rd party keyservers with official Apache Solr KEYS url
 
 ARG SOLR_VERSION="9.0.0"
 ARG SOLR_SHA512="383c6b6f352f2a385ece99b2b0a82e1552430aea65c6c33e5569da422138844192db4e06f58699325af55ee631694e16f836a5bbf8556f86fdeabc0cfa0533d5"
-ARG SOLR_KEYS="0D8D0B93"
+ARG SOLR_KEYS="3558857D1F5754B78C7F8B5A71A45A3D0D8D0B93"
 
 # If specified, this will override SOLR_DOWNLOAD_SERVER and all ASF mirrors. Typically used downstream for custom builds
 ARG SOLR_DOWNLOAD_URL
@@ -39,24 +38,30 @@ ARG SOLR_ARCHIVE_URL="https://archive.apache.org/dist/solr/solr/$SOLR_VERSION/so
 
 RUN set -ex; \
   apt-get update; \
-  apt-get -y install wget gpg; \
+  apt-get -y install wget gpg dirmngr; \
   rm -rf /var/lib/apt/lists/*; \
   export GNUPGHOME="/tmp/gnupg_home"; \
   mkdir -p "$GNUPGHOME"; \
   chmod 700 "$GNUPGHOME"; \
   echo "disable-ipv6" >> "$GNUPGHOME/dirmngr.conf"; \
-  for key in $SOLR_KEYS; do \
-    found=''; \
-    for server in \
-      pgp.mit.edu \
-      keyserver.ubuntu.com \
-      hkp://keyserver.ubuntu.com:80 \
-    ; do \
-      echo "  trying $server for $key"; \
-      gpg --batch --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$key" && found=yes && break; \
-      gpg --batch --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$key" && found=yes && break; \
-    done; \
-    test -z "$found" && echo >&2 "error: failed to fetch $key from several disparate servers -- network issues?" && exit 1; \
+  if [ -n "$SOLR_KEYS" ]; then \
+    # Install all Solr GPG Keys
+    wget -nv "https://downloads.apache.org/solr/KEYS" -O "SOLR_KEYS"; \
+    gpg \
+      --key-origin 'url,https://downloads.apache.org/solr/KEYS' \
+      --import SOLR_KEYS; \
+    rm SOLR_KEYS; \
+    # Export the keys explicitly mentioned in the Dockerfile
+    gpg --export ${SOLR_KEYS} > SAVED_KEYS; \
+    # Start from scratch
+    gpg --list-keys --with-colons \
+      | awk -F: '$1 == "pub" && ($2 == "e" || $2 == "r") { print $5 }' \
+      | xargs gpg --batch --yes --delete-keys; \
+    # Re-import the keys that we saved \
+    gpg --import SAVED_KEYS; \
+    rm SAVED_KEYS; \
+    gpg --list-keys ${SOLR_KEYS} || echo >&2 "error: failed to fetch ${SOLR_KEYS} from the official Solr Keys file" && exit 1; \
+  fi; \
   done; \
   MAX_REDIRECTS=2; \
   if [ -n "$SOLR_DOWNLOAD_URL" ]; then \
@@ -87,22 +92,14 @@ RUN set -ex; \
   tar -C /opt --extract --preserve-permissions --file "/opt/solr-$SOLR_VERSION.tgz"; \
   rm "/opt/solr-$SOLR_VERSION.tgz"*;
 
-
-
-# add symlink to /opt/solr, remove what we don't want.
-# Remove the Dockerfile because it might not represent the dockerfile that was used to generate the image.
-RUN set -ex; \
-  (cd /opt; ln -s solr-*/ solr); \
-  rm -Rf /opt/solr/docs /opt/solr/docker/Dockerfile;
-
-LABEL maintainer="The Apache Solr Project"
-LABEL url="https://solr.apache.org"
-LABEL repository="https://github.com/apache/solr"
-
-RUN set -ex; \
-    apt-get update; \
-    apt-get -y install acl dirmngr lsof procps wget netcat gosu tini jattach; \
-    rm -rf /var/lib/apt/lists/*;
+LABEL org.opencontainers.image.title="Apache Solr"
+LABEL org.opencontainers.image.description="Apache Solr is the popular, blazing-fast, open source search platform built on Apache Lucene."
+LABEL org.opencontainers.image.authors="The Apache Solr Project"
+LABEL org.opencontainers.image.url="https://solr.apache.org"
+LABEL org.opencontainers.image.source="https://github.com/apache/solr"
+LABEL org.opencontainers.image.documentation="https://solr.apache.org/guide/"
+LABEL org.opencontainers.image.version="9.0.0"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 ENV SOLR_USER="solr" \
     SOLR_UID="8983" \
@@ -120,6 +117,12 @@ RUN set -ex; \
   groupadd -r --gid "$SOLR_GID" "$SOLR_GROUP"; \
   useradd -r --uid "$SOLR_UID" --gid "$SOLR_GID" "$SOLR_USER"
 
+# add symlink to /opt/solr, remove what we don't want.
+# Remove the Dockerfile because it might not represent the dockerfile that was used to generate the image.
+RUN set -ex; \
+  (cd /opt; ln -s solr-*/ solr); \
+  rm -Rf /opt/solr/docs /opt/solr/docker/Dockerfile;
+
 RUN set -ex; \
   mkdir -p /opt/solr/server/solr/lib /docker-entrypoint-initdb.d; \
   cp /opt/solr/bin/solr.in.sh /etc/default/solr.in.sh; \
@@ -130,6 +133,11 @@ RUN set -ex; \
   chown -R "$SOLR_USER:0" /var/solr; \
   ln -s /opt/solr/modules /opt/solr/contrib; \
   ln -s /opt/solr/prometheus-exporter /opt/solr/modules/prometheus-exporter;
+
+RUN set -ex; \
+    apt-get update; \
+    apt-get -y install acl dirmngr lsof procps wget netcat gosu tini jattach; \
+    rm -rf /var/lib/apt/lists/*;
 
 VOLUME /var/solr
 EXPOSE 8983

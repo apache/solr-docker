@@ -45,21 +45,13 @@ RUN set -ex; \
   chmod 700 "$GNUPGHOME"; \
   echo "disable-ipv6" >> "$GNUPGHOME/dirmngr.conf"; \
   if [ -n "$SOLR_KEYS" ]; then \
-    # Install all Solr GPG Keys
-    wget -nv "https://downloads.apache.org/solr/KEYS" -O "SOLR_KEYS"; \
-    gpg \
-      --key-origin 'url,https://downloads.apache.org/solr/KEYS' \
-      --import SOLR_KEYS; \
-    rm SOLR_KEYS; \
-    # Export the keys explicitly mentioned in the Dockerfile
-    gpg --export ${SOLR_KEYS} > SAVED_KEYS; \
-    # Start from scratch
-    gpg --list-keys --with-colons \
-      | awk -F: '$1 == "pub" && ($2 == "e" || $2 == "r") { print $5 }' \
-      | xargs gpg --batch --yes --delete-keys; \
-    # Re-import the keys that we saved \
-    gpg --import SAVED_KEYS; \
-    rm SAVED_KEYS; \
+    # Install all Solr GPG Keys to start
+    wget -nv "https://downloads.apache.org/solr/KEYS" -O- | \
+      gpg --import --key-origin 'url,https://downloads.apache.org/solr/KEYS'; \
+    # Only keep the release key
+    release_keys="$(gpg --export -a ${SOLR_KEYS})"; \
+    rm -rf "$GNUPGHOME"/*; \
+    echo "${release_keys}" | gpg --import; \
   fi; \
   MAX_REDIRECTS=2; \
   if [ -n "$SOLR_DOWNLOAD_URL" ]; then \

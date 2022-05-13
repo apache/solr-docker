@@ -60,9 +60,7 @@ RUN set -ex; \
     # Re-import the keys that we saved \
     gpg --import SAVED_KEYS; \
     rm SAVED_KEYS; \
-    gpg --list-keys ${SOLR_KEYS} || echo >&2 "error: failed to fetch ${SOLR_KEYS} from the official Solr Keys file" && exit 1; \
   fi; \
-  done; \
   MAX_REDIRECTS=2; \
   if [ -n "$SOLR_DOWNLOAD_URL" ]; then \
     # If a custom URL is defined, we download from non-ASF mirror URL and allow more redirects and skip GPG step
@@ -92,13 +90,15 @@ RUN set -ex; \
   tar -C /opt --extract --preserve-permissions --file "/opt/solr-$SOLR_VERSION.tgz"; \
   rm "/opt/solr-$SOLR_VERSION.tgz"*;
 
+
+
 LABEL org.opencontainers.image.title="Apache Solr"
 LABEL org.opencontainers.image.description="Apache Solr is the popular, blazing-fast, open source search platform built on Apache Lucene."
 LABEL org.opencontainers.image.authors="The Apache Solr Project"
 LABEL org.opencontainers.image.url="https://solr.apache.org"
 LABEL org.opencontainers.image.source="https://github.com/apache/solr"
 LABEL org.opencontainers.image.documentation="https://solr.apache.org/guide/"
-LABEL org.opencontainers.image.version="9.0.0"
+LABEL org.opencontainers.image.version="${SOLR_VERSION}"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 ENV SOLR_USER="solr" \

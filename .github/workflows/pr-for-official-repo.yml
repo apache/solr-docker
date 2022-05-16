@@ -29,8 +29,8 @@ jobs:
         id: commit
         run: |
           str="$(jq '.head_commit.message' $GITHUB_EVENT_PATH)"    # get the head_commit message
-          message="$(echo ${str}  | sed -E 's/(#[0-9]+([^0-9]|\z?))/apache\/solr-docker\1/g'}"  # get the message, substituting the github links
-          echo ::set-output name=title::${message} | tr -d '"'         # get the message
+          message="$(echo ${str}  | sed -E 's/(#[0-9]+([^0-9]|\z?))/apache\/solr-docker\1/g')"  # get the message, substituting the github links
+          echo ::set-output name=message::${message} | tr -d '"'       # get the message
           echo ::set-output name=title::${message%%\\n*} | tr -d '"'   # get the title
           echo ::set-output name=body::${message##*\\n} | tr -d '"'    # get the body
       - name: Install BashBrew

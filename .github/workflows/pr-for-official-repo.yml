@@ -22,14 +22,17 @@ jobs:
       - name: Checkout official-images fork
         uses: actions/checkout@v3
         with:
-          repository: docker-library/official-images
+          #repository: docker-library/official-images
+          repository: docker-solr/official-images
           path: official-images
       - name: check headcommit message
         id: commit
         run: |
           str="$(jq '.head_commit.message' $GITHUB_EVENT_PATH)"    # get the head_commit message
-          echo ::set-output name=title::${str%%\\n*} | tr -d '"'         # get the title
-          echo ::set-output name=body::${str##*\\n} | tr -d '"'
+          message="$(echo ${str} | tr -d '"'  | sed -E 's/(#[0-9]+([^0-9]|\z?))/apache\/solr-docker\1/g'}"  # get the message, substituting the github links
+          echo ::set-output name=title::${message}         # get the message
+          echo ::set-output name=title::${message%%\\n*}   # get the title
+          echo ::set-output name=body::${message##*\\n}    # get the body
       - name: Install BashBrew
         run: |
           mkdir -p "${HOME}/.local/bin"
@@ -42,15 +45,15 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           path: official-images
-          push-to-fork: docker-solr/official-images
+          #push-to-fork: docker-solr/official-images
           add-paths: library/solr
-          branch-suffix: short-commit-hash
-          commit-message: "Apache Solr - ${{ github.event.commits[0].message }}"
+          branch: apache-solr-automated-pr
+          commit-message: "Apache Solr - ${{ steps.commit.outputs.message}}"
           title: "Apache Solr - ${{ steps.commit.outputs.title}}"
           body: |
             Apache Solr:
             
-            ${{ github.event.commits[0].message }}
+            ${{ steps.commit.outputs.message}}
             
             Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @madrob
             

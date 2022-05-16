@@ -12,6 +12,9 @@ on:
 
 jobs:
   test:
+    # Only run this job for the apache repo, not on any forks
+    if: github.repository_owner == 'apache'
+
     name: Create PR
 
     runs-on: ubuntu-latest
@@ -22,17 +25,13 @@ jobs:
       - name: Checkout official-images fork
         uses: actions/checkout@v3
         with:
-          #repository: docker-library/official-images
-          repository: docker-solr/official-images
+          repository: docker-library/official-images
           path: official-images
       - name: check headcommit message
         id: commit
         run: |
-          str="$(jq '.head_commit.message' $GITHUB_EVENT_PATH)"    # get the head_commit message
-          message="$(echo ${str} | sed -E 's/^#/ #/g' | sed -E 's/(#[0-9]+)$/\1 /g' | sed -E 's/([^a-zA-Z])(#[0-9]+[^0-9])/\1apache\/solr-docker\2/g')"  # get the message, substituting the github links
-          echo ::set-output name=title::${message%%\\n*} | tr -d '"'   # get the title
-          echo ::set-output name=body::${message##*\\n} | tr -d '"'    # get the body
-          echo ::set-output name=message::${message} | tr -d '"'       # get the message
+          message="$(jq '.head_commit.message' $GITHUB_EVENT_PATH | sed -E 's/^#/ #/g' | sed -E 's/(#[0-9]+)$/\1 /g' | sed -E 's/([^a-zA-Z])(#[0-9]+[^0-9])/\1apache\/solr-docker\2/g' | tr -d \")"  # get the message, substituting the github links
+          echo ::set-output name=title::${message%%\\n*}   # get the title
       - name: Install BashBrew
         run: |
           mkdir -p "${HOME}/.local/bin"
@@ -45,15 +44,18 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           path: official-images
-          #push-to-fork: docker-solr/official-images
+          push-to-fork: docker-solr/official-images
           add-paths: library/solr
           branch: apache-solr-automated-pr
-          commit-message: "Apache Solr - ${{ steps.commit.outputs.message}}"
+          commit-message: |
+            Apache Solr - ${{ steps.commit.outputs.title}}"
           title: "Apache Solr - ${{ steps.commit.outputs.title}}"
           body: |
             Apache Solr:
             
-            ${{ steps.commit.outputs.message}}
+            ${{ steps.commit.outputs.title }}
+            
+            See apache/solr-docker@${{ github.sha }} for the triggering commit.
             
             Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @madrob
             

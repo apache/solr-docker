@@ -5,7 +5,6 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/workflows/pr-for-official-repo.yml'
       - 'old-solr-versions'
       - 'generate-stackbrew-library.sh'
       - '[0-9]+.[0-9]+/**'
@@ -48,7 +47,7 @@ jobs:
           add-paths: library/solr
           branch: apache-solr-automated-pr
           commit-message: |
-            Apache Solr - ${{ steps.commit.outputs.title}}"
+            Apache Solr - ${{ steps.commit.outputs.title}}
           title: "Apache Solr - ${{ steps.commit.outputs.title}}"
           body: |
             Apache Solr:

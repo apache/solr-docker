@@ -8,7 +8,7 @@ Learn more on [Solr's homepage](https://solr.apache.org) and in the [Solr Refere
 # Supported tags and respective `Dockerfile` links
 
 See [Docker Hub](https://hub.docker.com/_/solr?tab=tags) for a list of image tags available to pull.
-Note that the Apache Solr project doesn't actually support any releases older than the current major release series, despite whatever tags are published.
+Note that the Apache Solr project does not support any releases older than the current major release series, despite whatever tags are published.
 
 As of Solr 9.0, the official Dockerfile is released along-side Solr.
 Therefore the project has decided to not support changes to Dockerfiles after release.

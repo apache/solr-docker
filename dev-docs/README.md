@@ -29,5 +29,5 @@ The PR is generated through:
   - We have to use this repo, because Apache does not allow forks in their organization.
 - This commit is made by the [@docker-solr-builder](https://github.com/docker-solr-builder), which has credentials saved in this repo.
   - These credentials were added by emailing them to the Apache infra-team (`root@`)
-  - If you need access to this account or credentials, reach out to [@HoustonPutman](https://github.com/HoustonPutman)
+  - If you need access to this account or credentials, reach out to the private mailing list.
 - Once the commit and branch are created, the Github Action will create a PR in the official repo.

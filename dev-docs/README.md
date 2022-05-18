@@ -44,5 +44,8 @@ The commit has to change the files that the Github Actions Workflow is listening
 
 The PR name will change to reflect the most recent commit message, and the pr description will link to this commit instead.
 The PR contents will be updated to reflect the generated solr image metadata made from the latest commit.
+There is no need to close an existing PR to make further changes.
 
-**There is no need to close an existing PR to make further changes.**
+**Make sure that all changes to Dockerfiles are reflected in the official source of these dockerfiles, [apache/solr](https://github.com/apache/solr).
+This will ensure that the official-images team does not ask for the same changes in future releases.
+This speeds up the release process and ensures that the Dockerfile provided in the binary-release is as similar as possible to the official Solr Dockerfile.**

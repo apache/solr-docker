@@ -21,7 +21,7 @@ This repository is available on [github.com/apache/solr-docker](https://github.c
 The Dockerfiles are generated upon release from [github.com/apache/solr](https://github.com/apache/solr).
 
 Please refer to the [developer documentation](dev-docs/README.md) for information on how this repository is maintained & automated.  
-**WARNING: Do not modify this repo manually unless you have first read through the developer documentation first.**
+**WARNING: Do not modify this repo manually unless you have read through the developer documentation first.**
 
 # License
 

@@ -5,9 +5,8 @@ on:
     branches:
       - 'main'
     paths:
-      - 'old-solr-versions'
       - 'generate-stackbrew-library.sh'
-      - '[0-9]+.[0-9]+/**'
+      - '[0-9]+.[0-9]+(-slim)?/**'
 
 jobs:
   test:

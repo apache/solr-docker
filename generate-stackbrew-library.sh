@@ -74,8 +74,9 @@ GitFetch: refs/heads/main
 EOH
 
 for version in "${versions[@]}"; do
-	for variant in ''; do
-		dir="$version${variant:+/$variant}"
+  # We can remove the variant loop when 8.11 is no longer supported
+	for variant in '' slim; do
+		dir="$version${variant:+-$variant}"
 		[ -f "$dir/Dockerfile" ] || continue
 
 		commit="$(dirCommit "$dir")"
@@ -120,5 +121,3 @@ for version in "${versions[@]}"; do
 		EOE
 	done
 done
-
-cat old-solr-versions

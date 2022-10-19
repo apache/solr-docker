@@ -131,13 +131,11 @@ RUN set -ex; \
     apt-get -y install acl dirmngr lsof procps wget netcat gosu tini jattach; \
     rm -rf /var/lib/apt/lists/*;
 
-# Workaround for JDK17 JIT compiler bug https://bugs.openjdk.org/browse/JDK-8285835
-ARG SOLR_OPTS="-XX:CompileCommand=exclude,com.github.benmanes.caffeine.cache.BoundedLocalCache::put"
-
 VOLUME /var/solr
 EXPOSE 8983
 WORKDIR /opt/solr
 USER $SOLR_USER
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["solr-foreground"]
+# TODO: Workaround for JDK17+ JIT compiler bug https://bugs.openjdk.org/browse/JDK-8285835)
+CMD ["solr-foreground", "-a", "-XX:CompileCommand=exclude,com.github.benmanes.caffeine.cache.BoundedLocalCache::put"]

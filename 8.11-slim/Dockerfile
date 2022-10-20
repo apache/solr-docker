@@ -1,5 +1,5 @@
-
-FROM openjdk:11-jre-slim
+# Patched 2022-10-20 to change from openjdk:11-jre-slim to eclipse-temurin:11-jre
+FROM eclipse-temurin:11-jre
 
 LABEL maintainer="The Apache Lucene/Solr Project"
 LABEL repository="https://github.com/docker-solr/docker-solr"

@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG VARIANT
-FROM eclipse-temurin:17-jre${VARIANT:-}
+# Patched 2022-10-21 to use eclipse-temurin:11-jre-focal which used Ubuntu 20.04, compatible with Docker client  < 20.10.16
+FROM eclipse-temurin:17-jre-focal
 
 # TODO: remove things that exist solely for downstream specialization since Dockerfile.local now exists for that
 

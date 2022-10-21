@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-FROM eclipse-temurin:17-jre
+ARG VARIANT
+FROM eclipse-temurin:17-jre${VARIANT:-}
 
 # TODO: remove things that exist solely for downstream specialization since Dockerfile.local now exists for that
 

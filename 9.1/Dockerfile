@@ -18,9 +18,9 @@ FROM eclipse-temurin:17-jre-focal
 
 # TODO: remove things that exist solely for downstream specialization since Dockerfile.local now exists for that
 
-ARG SOLR_VERSION="9.1.0"
-ARG SOLR_SHA512="16715fe50a74bc4906f655531523875e9e5d4a013aea22afff10a52dc6f05a8b62e079aee75cd9f2e250300e40071140c0a966cbd51af811a622f2f1f0b0c926"
-ARG SOLR_KEYS="2085660D9C1FCCACC4A479A3BF160FF14992A24C"
+ARG SOLR_VERSION="9.1.1"
+ARG SOLR_SHA512="59fd47185196fc6b0fad4b6b2ba547d136cc0c688addc9833129086944cc90e185a18c33fd70523edddad1a6ebe7b4cd893be5065c2b01fe21a5026bdb7e5d9f"
+ARG SOLR_KEYS="C3E7CBD9B9FE2B419EB14B89612B39A5BC981763"
 
 # If specified, this will override SOLR_DOWNLOAD_SERVER and all ASF mirrors. Typically used downstream for custom builds
 ARG SOLR_DOWNLOAD_URL

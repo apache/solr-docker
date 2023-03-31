@@ -1,5 +1,6 @@
 # Patched 2022-10-20 to change from openjdk:11-jre-slim to eclipse-temurin:11-jre
 # Patched 2022-10-21 to use eclipse-temurin:11-jre-focal which used Ubuntu 20.04, compatible with Docker client < 20.10.16
+# Patched 2023-04-01 to upgrade jattach to v2.0
 FROM eclipse-temurin:11-jre-focal
 
 LABEL maintainer="The Apache Lucene/Solr Project"
@@ -19,8 +20,8 @@ RUN set -ex; \
   apt-get update; \
   apt-get -y install acl dirmngr gpg lsof procps wget netcat gosu tini; \
   rm -rf /var/lib/apt/lists/*; \
-  cd /usr/local/bin; wget -nv https://github.com/apangin/jattach/releases/download/v1.5/jattach; chmod 755 jattach; \
-  echo >jattach.sha512 "d8eedbb3e192a8596c08efedff99b9acf1075331e1747107c07cdb1718db2abe259ef168109e46bd4cf80d47d43028ff469f95e6ddcbdda4d7ffa73a20e852f9  jattach"; \
+  cd /usr/local/bin; wget -nv https://github.com/apangin/jattach/releases/download/v2.0/jattach; chmod 755 jattach; \
+  echo >jattach.sha512 "a19e774600d6aa844bceb2189285848127a70130a69fb1840c10367f3360972c733b3f09e60e9672d387e2d48c750ab56acfe8f80f7c6af76f5d1123e5ad7222  jattach"; \
   sha512sum -c jattach.sha512; rm jattach.sha512
 
 ENV SOLR_USER="solr" \

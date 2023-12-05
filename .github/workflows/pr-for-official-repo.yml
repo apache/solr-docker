@@ -19,9 +19,9 @@ jobs:
 
     steps:
       # Setup
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Checkout official-images fork
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: docker-library/official-images
           path: official-images

@@ -33,7 +33,7 @@ ARG SOLR_DOWNLOAD_SERVER
 
 # These should never be overridden except for the purposes of testing the Dockerfile before release
 ARG SOLR_CLOSER_URL="http://www.apache.org/dyn/closer.lua?action=download&filename=/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
-ARG SOLR_DIST_URL="https://www.apache.org/dist/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
+ARG SOLR_DIST_URL="https://downloads.apache.org/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
 ARG SOLR_ARCHIVE_URL="https://archive.apache.org/dist/solr/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz"
 
 RUN set -ex; \

@@ -112,15 +112,19 @@ RUN set -ex; \
   sed -i -e 's/lsof -PniTCP:/lsof -t -PniTCP:/' /opt/solr/bin/solr; \
   chown -R "0:0" /opt/solr-$SOLR_VERSION /docker-entrypoint-initdb.d /opt/docker-solr; \
   chown -R "$SOLR_USER:0" /var/solr; \
+  chown -R "$SOLR_USER:$SOLR_USER" /opt/solr; \
   { command -v gpgconf; gpgconf --kill all || :; }; \
   rm -r "$GNUPGHOME"
 
 COPY --chown=0:0 scripts /opt/docker-solr/scripts
+
+COPY ./script.sh /opt/solr
+COPY ./basicauth.properties /opt/solr
+RUN chmod +x /opt/solr/script.sh
 
 VOLUME /var/solr
 EXPOSE 8983
 WORKDIR /opt/solr
 USER $SOLR_UID
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["solr-foreground"]
+ENTRYPOINT ["/opt/solr/script.sh"]

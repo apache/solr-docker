@@ -117,10 +117,19 @@ RUN set -ex; \
 
 COPY --chown=0:0 scripts /opt/docker-solr/scripts
 
+COPY entrypoint.sh /opt/solr
+COPY metrics-exporter.sh /opt/solr
+COPY basicauth.properties /opt/solr
+RUN chmod +x /opt/solr/entrypoint.sh
+RUN chmod +x /opt/solr/metrics-exporter.sh
+
+RUN chown -R $SOLR_USER:$SOLR_USER /opt/solr-8.11.3
+
+
 VOLUME /var/solr
 EXPOSE 8983
 WORKDIR /opt/solr
+
 USER $SOLR_UID
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["solr-foreground"]
+ENTRYPOINT ["/opt/solr/entrypoint.sh"]

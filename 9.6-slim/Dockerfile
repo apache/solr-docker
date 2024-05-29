@@ -16,11 +16,11 @@
 
 FROM eclipse-temurin:17-jre-jammy
 
-ARG SOLR_VERSION="9.6.0"
+ARG SOLR_VERSION="9.6.1"
 # empty for the full distribution, "-slim" for the slim distribution
 ARG SOLR_DIST="-slim"
-ARG SOLR_SHA512="deb3585aa25edbcb919109c8388bbc8c1efb136880628ccd1b057daaf6bab1e9ebcd7189465f28db35ae6990ed5bf2127cc95a18b6b4da6abfa33b10d5e5cc37"
-ARG SOLR_KEYS="1CF0DAD1470504C4EA95C697140BC45803B03F7F"
+ARG SOLR_SHA512="78e6558551c7710134f2519e5f86a32c636e5963f8efadc8c0391dfb99f7554b3d86197272aa92fa7b28589602d87389530eea043dd3d299983a1c49e38f0dc3"
+ARG SOLR_KEYS="50E3EE1C91C7E0CB4DFB007B369424FC98F3F6EC"
 
 # Override the default solr download location with a preferred mirror, e.g.:
 #   docker build -t mine --build-arg SOLR_DOWNLOAD_SERVER=https://downloads.apache.org/solr/solr .

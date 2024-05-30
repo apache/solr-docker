@@ -20,6 +20,9 @@ jobs:
     steps:
       # Setup
       - uses: actions/checkout@v4
+        with:
+          # This is required for stackbrew to know which commit a dockerfile belongs to
+          fetch-depth: 0
       - name: Checkout official-images fork
         uses: actions/checkout@v4
         with:
@@ -33,7 +36,7 @@ jobs:
       - name: Install BashBrew
         run: |
           mkdir -p "${HOME}/.local/bin"
-          wget -nv --output-document="${HOME}/.local/bin/bashbrew" https://github.com/docker-library/bashbrew/releases/download/v0.1.3/bashbrew-amd64
+          wget -nv --output-document="${HOME}/.local/bin/bashbrew" https://github.com/docker-library/bashbrew/releases/download/v0.1.12/bashbrew-amd64
           chmod a+x "${HOME}/.local/bin/bashbrew"
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Generate new Solr manifest

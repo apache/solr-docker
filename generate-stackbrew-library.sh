@@ -49,7 +49,7 @@ getArches() {
 	local repo="$1"; shift
 	local officialImagesUrl='https://github.com/docker-library/official-images/raw/master/library/'
 
-		eval "declare -g -A parentRepoToArches=( $(
+	eval "declare -g -A parentRepoToArches=( $(
 		find . -name 'Dockerfile' -not -path "./official-images/*" -exec awk '
 				toupper($1) == "FROM" && $2 !~ /^('"$repo"'|scratch|microsoft\/[^:]+)(:|$)/ {
 					print "'"$officialImagesUrl"'" $2
@@ -110,12 +110,14 @@ for version in "${versions[@]}"; do
 		fi
 
 		variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
-		variantArches="${parentRepoToArches[$variantParent]}"
+		variantArches=(${parentRepoToArches[$variantParent]})
+		# Do not produce 32bit images
+		variantArches=("${variantArches[@]/*32*}")
 
 		echo
 		cat <<-EOE
 			Tags: $(sed -E 's/ +/, /g' <<<"${variantAliases[@]}")
-			Architectures: $(sed -E 's/ +/, /g' <<<"$variantArches")
+			Architectures: $(sed -E 's/ +/, /g' <<<"${variantArches[@]}")
 			GitCommit: $commit
 			Directory: $dir
 		EOE

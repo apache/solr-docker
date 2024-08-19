@@ -117,8 +117,14 @@ RUN set -ex; \
   chmod 0664 /etc/default/solr.in.sh; \
   mkdir -p -m0770 /var/solr; \
   chown -R "$SOLR_USER:0" /var/solr; \
+  chown -R "$SOLR_USER:$SOLR_USER" /opt/solr; \
   test ! -e /opt/solr/modules || ln -s /opt/solr/modules /opt/solr/contrib; \
   test ! -e /opt/solr/prometheus-exporter || ln -s /opt/solr/prometheus-exporter /opt/solr/modules/prometheus-exporter;
+
+COPY entrypoint.sh /opt/solr
+COPY metrics-exporter.sh /opt/solr
+RUN chmod +x /opt/solr/entrypoint.sh
+RUN chmod +x /opt/solr/metrics-exporter.sh
 
 RUN set -ex; \
     apt-get update; \
@@ -130,5 +136,4 @@ EXPOSE 8983
 WORKDIR /opt/solr
 USER $SOLR_UID
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["solr-foreground"]
+ENTRYPOINT ["/opt/solr/entrypoint.sh"]

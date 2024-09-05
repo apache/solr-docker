@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jre-noble
 
 ARG SOLR_VERSION="9.6.1"
 # empty for the full distribution, "-slim" for the slim distribution
@@ -122,7 +122,7 @@ RUN set -ex; \
 
 RUN set -ex; \
     apt-get update; \
-    apt-get -y --no-install-recommends install acl lsof procps wget netcat gosu tini jattach; \
+    apt-get -y --no-install-recommends install acl lsof procps wget netcat-openbsd gosu tini jattach; \
     rm -rf /var/lib/apt/lists/*;
 
 VOLUME /var/solr

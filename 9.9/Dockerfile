@@ -16,11 +16,11 @@
 
 FROM eclipse-temurin:17-jre-jammy
 
-ARG SOLR_VERSION="9.7.0"
+ARG SOLR_VERSION="9.9.0"
 # empty for the full distribution, "-slim" for the slim distribution
-ARG SOLR_DIST="-slim"
-ARG SOLR_SHA512="f270ebd94deb9a002fb4e57c5cc2c11c7acc583dfa8e65a814028aa22dd8d0fa7c8a18f92024d8c0f5b07853801d25dcb2e26b3b3d4c8b2d906485f8dc0224c9"
-ARG SOLR_KEYS="EDF961FF03E647F9CA8A9C2C758051CCA3A13A7F"
+ARG SOLR_DIST=""
+ARG SOLR_SHA512="7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d"
+ARG SOLR_KEYS="50E3EE1C91C7E0CB4DFB007B369424FC98F3F6EC"
 
 # Override the default solr download location with a preferred mirror, e.g.:
 #   docker build -t mine --build-arg SOLR_DOWNLOAD_SERVER=https://downloads.apache.org/solr/solr .
@@ -78,7 +78,7 @@ RUN set -ex; \
 
 
 LABEL org.opencontainers.image.title="Apache Solr"
-LABEL org.opencontainers.image.description="Apache Solr is the popular, blazing-fast, open source search platform built on Apache Lucene."
+LABEL org.opencontainers.image.description="Solr is the blazing-fast, open source, multi-modal search platform built on Apache Lucene. It powers full-text, vector, and geospatial search at many of the world's largest organizations."
 LABEL org.opencontainers.image.authors="The Apache Solr Project"
 LABEL org.opencontainers.image.url="https://solr.apache.org"
 LABEL org.opencontainers.image.source="https://github.com/apache/solr"
@@ -90,7 +90,7 @@ ENV SOLR_USER="solr" \
     SOLR_UID="8983" \
     SOLR_GROUP="solr" \
     SOLR_GID="8983" \
-    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/prometheus-exporter/bin:$PATH" \
+    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/prometheus-exporter/bin:/opt/solr/cross-dc-manager/bin:$PATH" \
     SOLR_INCLUDE=/etc/default/solr.in.sh \
     SOLR_HOME=/var/solr/data \
     SOLR_PID_DIR=/var/solr \

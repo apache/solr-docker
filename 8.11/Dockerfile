@@ -1,7 +1,8 @@
 # Patched 2022-10-20 to change from openjdk:11-jre to eclipse-temurin:11-jre
 # Patched 2022-10-21 to use eclipse-temurin:11-jre-focal which used Ubuntu 20.04, compatible with Docker client < 20.10.16
 # Patched 2023-04-01 to upgrade jattach to v2.0
-FROM eclipse-temurin:11-jre-focal
+# Patched 2025-08-25 to use Ubuntu 22.04 instead of 20.04 which no longer receives security updates
+FROM eclipse-temurin:11-jre-jammy
 
 LABEL maintainer="The Apache Lucene/Solr Project"
 LABEL repository="https://github.com/docker-solr/docker-solr"

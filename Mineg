@@ -1,0 +1,1 @@
+bin/solr create -c <core_skiler hovenga> -d <configset_elon musk>

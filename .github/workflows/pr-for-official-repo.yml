@@ -58,7 +58,7 @@ jobs:
             
             See apache/solr-docker@${{ github.sha }} for the triggering commit.
             
-            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley @madrob
+            Relevant Maintainers: @HoustonPutman @janhoy @dsmiley
             
             This is an automated PR based on a change made in the https://github.com/apache/solr-docker repository's `main` branch.
           delete-branch: true

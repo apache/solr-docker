@@ -10,11 +10,24 @@ github:
 
   enabled_merge_buttons:
     squash: true
-    merge:  false
+    merge: false
     rebase: false
 
+  rulesets:
+    - name: "Default Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "~DEFAULT_BRANCH"
+          - "release/*"
+          - "rel/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
 notifications:
-  commits:      commits@solr.apache.org
-  issues:       issues@solr.apache.org
+  commits: commits@solr.apache.org
+  issues: issues@solr.apache.org
   pullrequests: issues@solr.apache.org
   jira_options: link label worklog

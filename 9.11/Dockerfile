@@ -16,11 +16,11 @@
 
 FROM eclipse-temurin:17-jre-jammy
 
-ARG SOLR_VERSION="9.9.0"
+ARG SOLR_VERSION="9.11.0"
 # empty for the full distribution, "-slim" for the slim distribution
 ARG SOLR_DIST=""
-ARG SOLR_SHA512="7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d"
-ARG SOLR_KEYS="50E3EE1C91C7E0CB4DFB007B369424FC98F3F6EC"
+ARG SOLR_SHA512="0cf320f15662b03844e2d3e983b2a50abab3e643d9aff53ed5a4481ef870776420c7bd8dfde377183d44304dcc589f6784ab020eb7c6675000f86fe32fff4057"
+ARG SOLR_KEYS="515EA995ED1DD799FA1422E5CA7514D8385D790B"
 
 # Override the default solr download location with a preferred mirror, e.g.:
 #   docker build -t mine --build-arg SOLR_DOWNLOAD_SERVER=https://downloads.apache.org/solr/solr .
@@ -122,7 +122,7 @@ RUN set -ex; \
 
 RUN set -ex; \
     apt-get update; \
-    apt-get -y --no-install-recommends install acl lsof procps wget netcat gosu tini jattach; \
+    apt-get -y --no-install-recommends install acl lsof procps wget netcat tini jattach; \
     rm -rf /var/lib/apt/lists/*;
 
 VOLUME /var/solr

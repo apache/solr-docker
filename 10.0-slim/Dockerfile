@@ -14,13 +14,13 @@
 # limitations under the License.
 
 
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-noble
 
-ARG SOLR_VERSION="9.9.0"
+ARG SOLR_VERSION="10.0.0"
 # empty for the full distribution, "-slim" for the slim distribution
-ARG SOLR_DIST=""
-ARG SOLR_SHA512="7b93dab3f0fd09c820a45574c4ef60dff0e8245b8b3a8913bc5874b6e12595ebbd3bb9c856a213ba1643673e461041e95e7e85031523dfb208686c41c366825d"
-ARG SOLR_KEYS="50E3EE1C91C7E0CB4DFB007B369424FC98F3F6EC"
+ARG SOLR_DIST="-slim"
+ARG SOLR_SHA512="18817965956567405f5788f391ac94b88777ecb2ebb0ee11ef88e6bd117508461b735f926cdf2e138b9ffb48c51700c104f3f20722f85d4e5bc8c9f790d16ef1"
+ARG SOLR_KEYS="EDF961FF03E647F9CA8A9C2C758051CCA3A13A7F"
 
 # Override the default solr download location with a preferred mirror, e.g.:
 #   docker build -t mine --build-arg SOLR_DOWNLOAD_SERVER=https://downloads.apache.org/solr/solr .
@@ -90,14 +90,14 @@ ENV SOLR_USER="solr" \
     SOLR_UID="8983" \
     SOLR_GROUP="solr" \
     SOLR_GID="8983" \
-    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/prometheus-exporter/bin:/opt/solr/cross-dc-manager/bin:$PATH" \
+    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/cross-dc-manager/bin:$PATH" \
     SOLR_INCLUDE=/etc/default/solr.in.sh \
     SOLR_HOME=/var/solr/data \
     SOLR_PID_DIR=/var/solr \
     SOLR_LOGS_DIR=/var/solr/logs \
     LOG4J_PROPS=/var/solr/log4j2.xml \
-    SOLR_JETTY_HOST="0.0.0.0" \
-    SOLR_ZK_EMBEDDED_HOST="0.0.0.0"
+    SOLR_HOST_BIND="0.0.0.0" \
+    SOLR_ZOOKEEPER_EMBEDDED_HOST="0.0.0.0"
 
 RUN set -ex; \
   groupadd -r --gid "$SOLR_GID" "$SOLR_GROUP"; \
@@ -116,13 +116,11 @@ RUN set -ex; \
   mv /opt/solr/bin/solr.in.cmd /opt/solr/bin/solr.in.cmd.orig; \
   chmod 0664 /etc/default/solr.in.sh; \
   mkdir -p -m0770 /var/solr; \
-  chown -R "$SOLR_USER:0" /var/solr; \
-  test ! -e /opt/solr/modules || ln -s /opt/solr/modules /opt/solr/contrib; \
-  test ! -e /opt/solr/prometheus-exporter || ln -s /opt/solr/prometheus-exporter /opt/solr/modules/prometheus-exporter;
+  chown -R "$SOLR_USER:0" /var/solr;
 
 RUN set -ex; \
     apt-get update; \
-    apt-get -y --no-install-recommends install acl lsof procps wget netcat gosu tini jattach; \
+    apt-get -y --no-install-recommends install curl acl lsof procps wget netcat-openbsd gosu tini jattach; \
     rm -rf /var/lib/apt/lists/*;
 
 VOLUME /var/solr

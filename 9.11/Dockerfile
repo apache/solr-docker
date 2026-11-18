@@ -125,6 +125,9 @@ RUN set -ex; \
     apt-get -y --no-install-recommends install acl lsof procps wget netcat tini jattach; \
     rm -rf /var/lib/apt/lists/*;
 
+RUN echo "downloading and installing JTS jar..."; \
+    wget -nv "https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/1.19.0/jts-core-1.19.0.jar" -O "/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.19.0.jar";
+
 VOLUME /var/solr
 EXPOSE 8983
 WORKDIR /opt/solr

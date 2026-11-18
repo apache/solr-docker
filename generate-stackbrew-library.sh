@@ -65,7 +65,6 @@ cat <<-EOH
 # this file is generated via https://github.com/apache/solr-docker/blob/$(fileCommit "$self")/$self
 
 Maintainers: The Apache Solr Project <dev@solr.apache.org> (@asfbot),
-			 Shalin Mangar (@shalinmangar),
 			 David Smiley (@dsmiley),
 			 Jan Høydahl (@janhoy),
 			 Houston Putman (@houstonputman)

@@ -14,13 +14,13 @@
 # limitations under the License.
 
 
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-noble
 
-ARG SOLR_VERSION="9.6.1"
+ARG SOLR_VERSION="10.1.0"
 # empty for the full distribution, "-slim" for the slim distribution
 ARG SOLR_DIST=""
-ARG SOLR_SHA512="7e16aa71fc01f9d9b05e5514e35798104a18253a211426aa669aa3b91225d110a4fa1c78c9ec86b7e1909e2aae63696deffd877536790303cd0638eb7f1a8c63"
-ARG SOLR_KEYS="50E3EE1C91C7E0CB4DFB007B369424FC98F3F6EC"
+ARG SOLR_SHA512="1e0cac2a3f5d415fbf67fdb5efe62944fbf88f009aaa41113862e63dc1e9264d3ad5bdf532eb185b18687ca93becc807600ceec957c5a890c3026c0ba8d951d8"
+ARG SOLR_KEYS="F23F054D9EC50F2397FF2B814E67A2711D053DDB"
 
 # Override the default solr download location with a preferred mirror, e.g.:
 #   docker build -t mine --build-arg SOLR_DOWNLOAD_SERVER=https://downloads.apache.org/solr/solr .
@@ -78,7 +78,7 @@ RUN set -ex; \
 
 
 LABEL org.opencontainers.image.title="Apache Solr"
-LABEL org.opencontainers.image.description="Apache Solr is the popular, blazing-fast, open source search platform built on Apache Lucene."
+LABEL org.opencontainers.image.description="Solr is the blazing-fast, open source, multi-modal search platform built on Apache Lucene. It powers full-text, vector, and geospatial search at many of the world's largest organizations."
 LABEL org.opencontainers.image.authors="The Apache Solr Project"
 LABEL org.opencontainers.image.url="https://solr.apache.org"
 LABEL org.opencontainers.image.source="https://github.com/apache/solr"
@@ -90,14 +90,14 @@ ENV SOLR_USER="solr" \
     SOLR_UID="8983" \
     SOLR_GROUP="solr" \
     SOLR_GID="8983" \
-    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/prometheus-exporter/bin:$PATH" \
+    PATH="/opt/solr/bin:/opt/solr/docker/scripts:/opt/solr/cross-dc-manager/bin:$PATH" \
     SOLR_INCLUDE=/etc/default/solr.in.sh \
     SOLR_HOME=/var/solr/data \
     SOLR_PID_DIR=/var/solr \
     SOLR_LOGS_DIR=/var/solr/logs \
     LOG4J_PROPS=/var/solr/log4j2.xml \
-    SOLR_JETTY_HOST="0.0.0.0" \
-    SOLR_ZK_EMBEDDED_HOST="0.0.0.0"
+    SOLR_HOST_BIND="0.0.0.0" \
+    SOLR_ZOOKEEPER_EMBEDDED_HOST="0.0.0.0"
 
 RUN set -ex; \
   groupadd -r --gid "$SOLR_GID" "$SOLR_GROUP"; \
@@ -116,17 +116,12 @@ RUN set -ex; \
   mv /opt/solr/bin/solr.in.cmd /opt/solr/bin/solr.in.cmd.orig; \
   chmod 0664 /etc/default/solr.in.sh; \
   mkdir -p -m0770 /var/solr; \
-  chown -R "$SOLR_USER:0" /var/solr; \
-  test ! -e /opt/solr/modules || ln -s /opt/solr/modules /opt/solr/contrib; \
-  test ! -e /opt/solr/prometheus-exporter || ln -s /opt/solr/prometheus-exporter /opt/solr/modules/prometheus-exporter;
+  chown -R "$SOLR_USER:0" /var/solr;
 
 RUN set -ex; \
     apt-get update; \
-    apt-get -y --no-install-recommends install acl lsof procps wget netcat gosu tini jattach; \
+    apt-get -y --no-install-recommends install curl acl lsof procps wget netcat-openbsd tini jattach; \
     rm -rf /var/lib/apt/lists/*;
-
-RUN echo "downloading and installing JTS jar..."; \
-    wget -nv "https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/1.19.0/jts-core-1.19.0.jar" -O "/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.19.0.jar";
 
 VOLUME /var/solr
 EXPOSE 8983

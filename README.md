@@ -1,56 +1,44 @@
-# What is Apache Solr™?
+# Solr with JTS spatial support
 
-Solr is the blazing-fast, open source, multi-modal search platform built on Apache Lucene.
-It powers full-text, vector, analytics, and geospatial search at many of the world's largest organizations.
-Other major features include Kubernetes integration, streaming, highlighting, faceting, and spellchecking.
+The [official Apache Solr image](https://hub.docker.com/_/solr) plus the
+[JTS Topology Suite](https://github.com/locationtech/jts) jar. Solr needs JTS for
+`spatialContextFactory="JTS"` field types: polygons, multi-polygons and other WKT shapes.
 
-Learn more on [Solr's homepage](https://solr.apache.org) and in the [Solr Reference Guide](https://solr.apache.org/guide/solr/).
+The [Dockerfile](Dockerfile) is `FROM solr:<version>` plus one checksum-verified jar, so
+the official image's patches and verification carry over.
 
-# Supported tags and respective `Dockerfile` links
+## Using the image
 
-See [Docker Hub](https://hub.docker.com/_/solr?tab=tags) for a list of image tags available to pull.
-Note that the Apache Solr project does not support any releases older than the current major release series, despite whatever tags are published.
+```sh
+podman pull ghcr.io/tufts-technology-services/solr-docker-spatial:9.11
+```
 
-The official Dockerfile is released along-side Solr.
-Therefore the project has decided to not support changes to Dockerfiles after release.
-Changes must be made to [github.com/apache/solr](https://github.com/apache/solr), which will then be included in the next targeted release.
+| Tag | Meaning |
+| --- | --- |
+| `9.11` | The Solr minor version set in the Dockerfile |
+| `latest` | The most recent build from `main` |
+| `spatial-jts` | Same as `latest`; kept for deployments from when the image was built from the `spatial-jts` branch |
 
-# About this repository
+Every push to `main` builds and signs the image with cosign, and a weekly rebuild picks
+up patch releases of the base image.
 
-This repository is available on [github.com/apache/solr-docker](https://github.com/apache/solr-docker), and the official build is on the [Docker Hub](https://hub.docker.com/_/solr/).
+## Building locally
 
-The Dockerfiles are generated upon release from [github.com/apache/solr](https://github.com/apache/solr).
+```sh
+podman build -t solr-spatial:9.11 .
+```
 
-Please refer to the [developer documentation](dev-docs/README.md) for information on how this repository is maintained & automated.  
-**WARNING: Do not modify this repo manually unless you have read through the developer documentation first.**
+## Upgrading Solr
 
-# License
+1. Change `ARG SOLR_VERSION` in the Dockerfile. The workflow reads this value to tag the
+   image.
+2. Look up the `jts-core` version in that Solr release's `versions.lock`. If it differs
+   from `JTS_VERSION`, update `JTS_VERSION` and `JTS_SHA256`. Maven Central only
+   publishes SHA-1 for the jar, so download it, compute the SHA-256, and check the
+   download against Maven's SHA-1 first.
+3. Check that `/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/` still exists in the new
+   image. Solr only loads JTS from there, not from its usual lib directories.
 
-Solr is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+## License
 
-This repository is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-
-Copyright 2015-2022 The Apache Software Foundation
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-# User Feedback
-
-## Issues
-
-Please report issues with this docker image on via [Apache Solr JIRA](https://issues.apache.org/jira/projects/SOLR). But please first reach out via the users@solr mailing list linked in the community information below.
-
-For general questions about Solr, see the [Community information](http://solr.apache.org/community.html), in particular the users@solr mailing list.
-
-## Contributing
-
-If you want to contribute to Solr, see the [How To Contribute](http://solr.apache.org/community.html#how-to-contribute).
-
-# History
-
-This project was started in 2015 by [Martijn Koster](https://github.com/makuk66). In 2019 maintainership and copyright was transferred to the Apache Solr project. Many thanks to Martijn for all your contributions over the years!
-
+[Apache License, Version 2.0](LICENSE).

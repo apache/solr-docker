@@ -3,7 +3,7 @@
 # Official Solr image plus the JTS Topology Suite, which Solr needs for
 # JTS-backed spatial fields (polygons, WKT shapes).
 #
-# Build: docker build --build-arg SOLR_VERSION=9.11 -t solr-spatial:9.11 spatial
+# Build: podman build -t solr-spatial:9.11 .
 
 ARG SOLR_VERSION=9.11
 FROM solr:${SOLR_VERSION}

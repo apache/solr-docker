@@ -7,16 +7,14 @@ name: Publish solr container w JTS
 
 on:
   push:
-    branches: [ "spatial-jts" ]
+    branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   release:
     types: [ "published" ]
   pull_request:
-    branches: [ "spatial-jts" ]
+    branches: [ "main" ]
   # Rebuild weekly to pick up patch and security updates to the base solr image.
-  # GitHub only runs scheduled workflows from the default branch, so this needs
-  # to be on main to fire; the checkout below then builds spatial-jts.
   schedule:
     - cron: '17 6 * * 1'
   workflow_dispatch:
@@ -43,9 +41,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Scheduled runs start from main; everything else builds the ref that
-          # triggered it (an empty ref means the default).
-          ref: ${{ github.event_name == 'schedule' && 'spatial-jts' || '' }}
           persist-credentials: false
 
       # The Dockerfile's SOLR_VERSION default is the single source of truth for
@@ -53,7 +48,7 @@ jobs:
       - name: Read Solr version
         id: solr
         run: |
-          version=$(sed -n 's/^ARG SOLR_VERSION=//p' spatial/Dockerfile)
+          version=$(sed -n 's/^ARG SOLR_VERSION=//p' Dockerfile)
           test -n "$version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
@@ -88,11 +83,14 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # spatial-jts is the tag deployments used when the image was built
+          # from that branch; keep publishing it so they still get updates.
           tags: |
-            type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=raw,value=${{ steps.solr.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
+            type=raw,value=spatial-jts,enable=${{ github.event_name != 'pull_request' }}
+            type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -100,7 +98,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
-          context: ./spatial
+          context: .
           build-args: |
             SOLR_VERSION=${{ steps.solr.outputs.version }}
           # Always check for a newer base image rather than reusing a cached one.

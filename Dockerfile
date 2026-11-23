@@ -16,7 +16,9 @@ ARG JTS_SHA256=dbb8644cf324123d06c27aa982f570811e10b4cb1f2aef893b00de237d33efc0
 
 USER root
 # Solr only loads JTS from WEB-INF/lib, not from its usual lib directories.
-ADD --checksum=sha256:${JTS_SHA256} --chown=solr:solr \
+# ADD saves URL downloads as mode 600; make the jar world-readable like Solr's
+# own jars so it still loads when the container runs as a different UID.
+ADD --checksum=sha256:${JTS_SHA256} --chown=solr:solr --chmod=644 \
     https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/${JTS_VERSION}/jts-core-${JTS_VERSION}.jar \
     /opt/solr/server/solr-webapp/webapp/WEB-INF/lib/
 USER solr
